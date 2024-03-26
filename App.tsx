@@ -24,6 +24,17 @@ const tokenCache = {
   },
 };
 
+const getMoviesFromApi = () => {
+  return fetch(Constants.expoConfig.extra.movieDb.url)
+    .then((response) => response.json())
+    .then((json) => {
+      return json.movies;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 const SignOut = () => {
   const { isLoaded, signOut } = useAuth();
   if (!isLoaded) {
