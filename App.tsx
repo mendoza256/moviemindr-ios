@@ -78,6 +78,7 @@ export default function App() {
     getMovies(page);
   }, []);
 
+  // FIXME returns movies {"_h": 0, "_i": 0, "_j": null, "_k": null}
   console.log("movies", movies);
 
   return (
