@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import Constants from "expo-constants";
@@ -9,7 +9,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import React, { useEffect, useState } from "react";
 import "@tamagui/core/reset.css";
 import { TamaguiProvider, View, createTamagui } from "@tamagui/core";
-import { Button } from "tamagui";
+import { Button, ScrollView } from "tamagui";
 import { config } from "@tamagui/config/v3";
 import { Menu } from "./components/Menu/Menu";
 import { MovieList } from "./components/MovieList/MovieList";
@@ -29,23 +29,6 @@ const tokenCache = {
       return;
     }
   },
-};
-
-const SignOut = () => {
-  const { isLoaded, signOut } = useAuth();
-  if (!isLoaded) {
-    return null;
-  }
-  return (
-    <View>
-      <Button
-        title="Sign Out"
-        onPress={() => {
-          signOut();
-        }}
-      />
-    </View>
-  );
 };
 
 // you usually export this from a tamagui.config.ts file
@@ -88,23 +71,16 @@ export default function App() {
     >
       <TamaguiProvider config={tamaguiConfig}>
         <SafeAreaProvider>
-          <View style={styles.container}>
+          <ScrollView>
             <Button onPress={() => getMovies(1)}>Call API</Button>
+            <SignOut />
             <Text>{movies ? movies.length : "Loading"}</Text>
             <MovieList movies={movies} />
+            <Menu />
             <StatusBar style="auto" />
-          </View>
+          </ScrollView>
         </SafeAreaProvider>
       </TamaguiProvider>
     </ClerkProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
