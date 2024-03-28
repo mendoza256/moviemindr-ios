@@ -14,6 +14,7 @@ import {
   styled,
 } from "tamagui";
 import { UserAvatar } from "./Avatar";
+import { useAuth } from "@clerk/clerk-expo";
 const demos = ["background", "underline"] as const;
 
 const demosTitle: Record<(typeof demos)[number], string> = {
@@ -25,6 +26,8 @@ export const Menu = () => {
   const [demoIndex, setDemoIndex] = useState(0);
 
   const demo = demos[demoIndex];
+
+  const { isLoaded, signOut } = useAuth();
 
   return (
     <>
@@ -50,6 +53,11 @@ export const Menu = () => {
         >
           {demosTitle[demo]}
         </Button>
+        <Button
+          onPress={() => {
+            signOut();
+          }}
+        />
       </XStack>
     </>
   );
