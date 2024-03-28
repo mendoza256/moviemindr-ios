@@ -1,12 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import { useAuth } from "@clerk/clerk-expo";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import "@tamagui/core/reset.css";
+import { TamaguiProvider, View, createTamagui } from "@tamagui/core";
+import { Button } from "tamagui";
+import { config } from "@tamagui/config/v3";
+import { Menu } from "./components/Menu/Menu";
+import { MovieList } from "./components/MovieList/MovieList";
 
 const tokenCache = {
   async getToken(key: string) {
@@ -25,19 +31,6 @@ const tokenCache = {
   },
 };
 
-const getMoviesFromApi = async (page: number) => {
-  const url = Constants.expoConfig.extra.baseUrl + parseInt(page);
-  console.log(url);
-  return fetch(url)
-    .then((response) => response.json())
-    .then((json) => {
-      return json.movies;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
-
 const SignOut = () => {
   const { isLoaded, signOut } = useAuth();
   if (!isLoaded) {
@@ -54,6 +47,15 @@ const SignOut = () => {
     </View>
   );
 };
+
+// you usually export this from a tamagui.config.ts file
+const tamaguiConfig = createTamagui(config);
+
+// make TypeScript type everything based on your config
+type Conf = typeof tamaguiConfig;
+declare module "@tamagui/core" {
+  interface TamaguiCustomConfig extends Conf {}
+}
 
 export default function App() {
   const [movies, setMovies] = useState([]);
@@ -75,25 +77,25 @@ export default function App() {
   };
 
   useEffect(() => {
-    getMovies(page);
+    getMovies(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // FIXME returns movies {"_h": 0, "_i": 0, "_j": null, "_k": null}
-  console.log("movies", movies);
 
   return (
     <ClerkProvider
       publishableKey={Constants.expoConfig.extra.clerkPublishableKey}
       tokenCache={tokenCache}
     >
-      <SafeAreaProvider>
-        <View style={styles.container}>
-          <Button onPress={() => getMoviesFromApi(2)} title="call api"></Button>
-          <Text>Open up App.js to start working on your app!!!!</Text>
-          {/* <Text>{movies ? movies.length : "Loading"}</Text> */}
-          <StatusBar style="auto" />
-        </View>
-      </SafeAreaProvider>
+      <TamaguiProvider config={tamaguiConfig}>
+        <SafeAreaProvider>
+          <View style={styles.container}>
+            <Button onPress={() => getMovies(1)}>Call API</Button>
+            <Text>{movies ? movies.length : "Loading"}</Text>
+            <MovieList movies={movies} />
+            <StatusBar style="auto" />
+          </View>
+        </SafeAreaProvider>
+      </TamaguiProvider>
     </ClerkProvider>
   );
 }
