@@ -3,6 +3,6 @@ module.exports = {
   version: "0.0.1",
   extra: {
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    baseUrl: "localhost:3001/movies/",
+    baseUrl: "http://localhost:3001/movies/",
   },
 };
